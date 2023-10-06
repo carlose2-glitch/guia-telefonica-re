@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./Contact-book.ico">
+    <script src="https://kit.fontawesome.com/5b4e3ea55f.js" crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Guia Telefonica</title>
+</head>
+<body>
+    <!-- primer cuadro agregar contacto -->
+    <header>
+        <h1>Guia telefonica</h1>
+    </header>
+    <div class="subtitle">
+        <h2>Contactos</h2>
+    </div>
+    <main>
+        <form action="" id="form">
+            <h2 class="h2_create-contact" style="color: #d1d5db;">Crear contacto</h2>
+
+            <div class="enter_data">
+                <i class="fa-solid fa-user"></i>
+                <input class="input_form enter_name" type="text" placeholder="Ingresa el Nombre">
+                
+            </div>
+
+            <div class="enter_data">
+                <i class="fa-solid fa-phone"></i>
+                <input class="input_form enter_number" type="tel" placeholder="Ingresa el Telefono">
+                <p class="error error1">debe ser un solo nombre con la primera letra mayuscula y sin espacios</p>
+            </div>
+           
+            <div class="save_number">
+                <p class="error error2">empezar: 0212/0412/0416/0414/0424 seguido de 7 numeros</p>
+                <button class="btn save-btn">Guardar</button>
+                
+            </div>
+        </form>
+
+        <div class="btn_list">
+            <button class="btn list_item">Lista de contactos</button>
+
+        </div>
+<!-- segundo cuadro lista de contactos -->
+
+        <div class="contacts">
+            
+      
+            
+        </div>
+        
+
+         <div class="create_contact-btn">
+            <button class="btn-create">Crear contacto</button>
+         </div>
+    </main>
+    
+    
+    <script src="./app.js"></script>
+</body>
+</html>
