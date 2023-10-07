@@ -1,3 +1,4 @@
 # guia-telefonica-re
-se pueden guardar solo numeros de origen venezolano
+
+Only numbers of Venezuelan origin can be saved
 https://carlose2-glitch.github.io/guia-telefonica-re/
