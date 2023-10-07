@@ -136,7 +136,6 @@ saveContact.addEventListener('click', async e =>{
     contador++;
     localStorage.removeItem('contador');
     localStorage.setItem('contador', contador);
-    localStorage.removeItem('contacts');
     localStorage.setItem('contacts', JSON.stringify(contactsAgregados));
     listContacts.appendChild(crearContacto);//agrega el contacto
     form.reset()//resetea el formulario
@@ -198,21 +197,12 @@ const validationedit = (verification, verificationRegex) =>{
 
 //boton para guardar el contacto del icono check editado
 
-const saveproduct = async (edit) =>{
+const saveproduct = (edit) =>{
        
     const nameInput = edit.parentElement.parentElement.parentElement.children[1].value;//etiqueta del inputname
     const numberInput = edit.parentElement.parentElement.parentElement.parentElement.children[1].children[0].value;//etiqueta del inputnumber
 
         if(nombreeditar.test(nameInput) && numeroeditar.test(numberInput)){
-
-            await fetch(`https://septimointent.onrender.com/contacts/${edit.id}`, 
-            {
-                method: 'PATCH',
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({namecontact:nameInput, telf: numberInput})
-            })
 
            edit.parentElement.style.display = 'none';//desabilita el check
            edit.parentElement.parentElement.children[0].style.display = 'flex';//habilita el pencil
@@ -220,7 +210,13 @@ const saveproduct = async (edit) =>{
            edit.parentElement.parentElement.parentElement.parentElement.children[1].children[0].setAttribute('readonly', true); //solo lectura el input number
            edit.parentElement.parentElement.parentElement.children[1].style.background = '#1f2937';//devuelve los colores del input nombre en modo guardado
            edit.parentElement.parentElement.parentElement.parentElement.children[1].children[0].style.background = '#1f2937';//devuelve los colores del input del numero en modo guardado
+           const findId = contactsAgregados.findIndex(contact => contact.id === Number(edit.parentElement.parentElement.parentElement.parentElement.id));
+           contactsAgregados[findId].nombre = nameInput;
+           contactsAgregados[findId].numero = numberInput;
+           localStorage.setItem('contacts', JSON.stringify(contactsAgregados));
 
+    }else{
+    alert('nombre de contacto o numero invalido');
     }
 }
 
@@ -238,11 +234,9 @@ listContacts.addEventListener('click', e =>{
 const deleteContact = (borrar) =>{//borrar el contacto
 
     contactsAgregados = JSON.parse(localStorage.getItem('contacts'));
-    localStorage.removeItem('contacts');
     const findId = contactsAgregados.findIndex(contact => contact.id === Number(borrar.parentElement.parentElement.id));
     contactsAgregados.splice(findId, 1);
     localStorage.setItem('contacts', JSON.stringify(contactsAgregados));
-
     borrar.parentElement.parentElement.remove();
 
 }
