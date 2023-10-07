@@ -1,3 +1,4 @@
+let contactsAgregados=[]; 
 const btnCerrarSesion = document.getElementById('cerrar-sesion');
 const userIn = document.querySelector('.enter_name');
 const userTelf = document.querySelector('.enter_number');
@@ -10,7 +11,6 @@ const createContactReturn = document.querySelector('.create_contact-btn');
 const btnCreateReturn = document.querySelector('.btn-create');
 const edit = document.querySelector('.fa-pencil');
 const number_contact = document.querySelector('.number-contact');
-//const trash = document.querySelector('.fa-trash');
 const contact = document.querySelector('.contact');
 const saveContact = document.querySelector('.save-btn');
 saveContact.disabled = true;
@@ -19,7 +19,7 @@ const redp = document.querySelector('.error1');
 const redp2 = document.querySelector('.error2');
 let nameValid = false;
 let numberValid = false;
-
+let contador = 0;
 const nombreeditar = /^[A-Z][a-z]+$/;
 const numeroeditar = /^((0412)|(0212)|(0416)|(0414)|(0424)|(0426))[0-9]{7}$/;
 const medida = matchMedia('(min-width: 769px)');
@@ -101,23 +101,14 @@ saveContact.addEventListener('click', async e =>{
         username: userIn.value,
         tefl: userTelf.value
     }
-//llamado a la base de datos
-    const responseJSON = await fetch('https://septimointent.onrender.com/contacts', 
-    {
-        method: 'POST',
-        headers:{
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({user: user.username, namecontact:data.username, telf: data.tefl})
-    })
-    const response = await responseJSON.json();
     //crear contacto modo usuario
 
     const crearContacto = document.createElement('div');
+    crearContacto.setAttribute('id', contador)
     crearContacto.setAttribute ('class', 'contact');
 
     crearContacto.innerHTML = `<div class='name-contact'>
-    <i class='fa-solid fa-trash' id="${response.id}"></i>
+    <i class='fa-solid fa-trash'></i>
 
     <input type='text' value='${data.username}' readonly class='input_edit enter_name-edit'>
     
@@ -126,7 +117,7 @@ saveContact.addEventListener('click', async e =>{
         
         <div class="iconcheck">
 
-            <i class="fa-solid fa-check" id="${response.id}"></i>
+            <i class="fa-solid fa-check"></i>
         </div>
 
     </button>
@@ -138,10 +129,18 @@ saveContact.addEventListener('click', async e =>{
     </div>`;
 
 
+    contactsAgregados.push( {nombre:data.username,
+                             numero: data.tefl,
+                             id: contador});
 
-listContacts.appendChild(crearContacto);//agrega el contacto
-form.reset()//resetea el formulario
-saveContact.disabled = true;//desabilita el boton guardar
+    contador++;
+    localStorage.removeItem('contador');
+    localStorage.setItem('contador', contador);
+    localStorage.removeItem('contacts');
+    localStorage.setItem('contacts', JSON.stringify(contactsAgregados));
+    listContacts.appendChild(crearContacto);//agrega el contacto
+    form.reset()//resetea el formulario
+    saveContact.disabled = true;//desabilita el boton guardar
 })
 
 //boton para acceder a la lista de contactos en version mobile
@@ -236,34 +235,39 @@ listContacts.addEventListener('click', e =>{
     }
 })
 
-const deleteContact = async (borrar) =>{//borrar el contacto
+const deleteContact = (borrar) =>{//borrar el contacto
 
-    await fetch(`https://septimointent.onrender.com/contacts/${borrar.id}`, 
-    {method: 'DELETE'})
+    contactsAgregados = JSON.parse(localStorage.getItem('contacts'));
+    localStorage.removeItem('contacts');
+    const findId = contactsAgregados.findIndex(contact => contact.id === Number(borrar.parentElement.parentElement.id));
+    contactsAgregados.splice(findId, 1);
+    localStorage.setItem('contacts', JSON.stringify(contactsAgregados));
+
     borrar.parentElement.parentElement.remove();
+
 }
 
 //imprime los contactos al iniciar la pagina
-const getcontactsdatabase = async () =>{
+const getcontactsdatabase = () =>{
 
-    const response = await fetch ('https://septimointent.onrender.com/contacts', {method: 'GET'});
-    const contacts = await response.json();
+    const contacts =  JSON.parse(localStorage.getItem('contacts'));
+    contador = Number(localStorage.getItem('contador'));
+    if(contacts!==null){
+    contactsAgregados = contacts;
     
-    const getcontacts = contacts.filter(contact => contact.user === user.username);
-    getcontacts.forEach(todo =>{
-        
-        listContacts.innerHTML += ` <div class="contact" id="contact1">
-                  <div class='name-contact'>
-        <i class='fa-solid fa-trash' id=${todo.id}></i>
+    contacts.forEach(data => {
+
+        listContacts.innerHTML += `<div class="contact" id="${data.id}"> <div class='name-contact'>
+        <i class='fa-solid fa-trash'></i>
     
-        <input type='text' value='${todo.namecontact}' readonly class='input_edit enter_name-edit'>
+        <input type='text' value='${data.nombre}' readonly class='input_edit enter_name-edit'>
         
         <button class='btn-edit'>
             <i class='fa-solid fa-pencil'></i>
             
             <div class="iconcheck">
     
-                <i class="fa-solid fa-check" id="${todo.id}"></i>
+                <i class="fa-solid fa-check"></i>
             </div>
     
         </button>
@@ -271,9 +275,10 @@ const getcontactsdatabase = async () =>{
         </div>
     
         <div class='number-contact'>
-            <input type='tel' readonly value='${todo.telf}' class='input_edit number_edit'>
-        </div>
-        </div>`;
+            <input type='tel' readonly value='${data.numero}' class='input_edit number_edit'>
+        </div><div>`
+
     })
+}
 }
 getcontactsdatabase();
